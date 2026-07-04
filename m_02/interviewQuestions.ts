@@ -1,6 +1,5 @@
 /*
 1)
-Frage 1
 Soziale Netzwerkkonnektivität. Geben Sie ein soziales Netzwerk mit 
 n Mitgliedern und eine Protokolldatei mit m Zeitstempeln an, zu denen Paare von 
 Mitgliedern Freundschaften geschlossen haben. Entwickeln Sie einen Algorithmus, 
@@ -23,7 +22,7 @@ interface UnionDataType {
     find(i: number): number;
 }
 
-class UnionFind implements UnionDataType  {
+class UnionFindExOne implements UnionDataType  {
     private parents: number[];
     private sizes: number[];
 
@@ -56,17 +55,16 @@ class UnionFind implements UnionDataType  {
             this.parents[rootBIndex] = rootAIndex;
         } else {
             this.sizes[rootBIndex] = sizeSum;
-            this.parents[rootAIndex] = rootBIndex;            
+            this.parents[rootAIndex] = rootBIndex;  
         }
     }
 }
 
 
 
-
 function earliestTimestampAllConnected(n: number, logs: LogEntry[]): number | null {
     let group = n;
-    let UnionFindInstance = new UnionFind(n);
+    let UnionFindInstance = new UnionFindExOne(n);
     for (let i = 0; i < logs.length; i++) {
 
         const currAIndex = logs[i].iA;
@@ -86,6 +84,7 @@ function earliestTimestampAllConnected(n: number, logs: LogEntry[]): number | nu
 }
 
 /*
+2)
 Union-find mit spezifischem kanonischen Element. Fügen Sie eine Methode find() zum union-find Datentyp hinzu,
 so dass find(i) das größte Element in der verbundenen Komponente zurückgibt, die i enthält. Die Operationen union(),
 connected() und find() sollten alle logarithmische Zeit oder mehr benötigen.
@@ -93,3 +92,50 @@ connected() und find() sollten alle logarithmische Zeit oder mehr benötigen.
 Wenn zum Beispiel eine der verbundenen Komponenten {1, 2, 6, 9} ist, dann sollte die Methode find() für jedes der vier
 Elemente in den verbundenen Komponenten 9 zurückgeben.
 */
+
+class UnionFindExTwo implements UnionDataType  {
+    private parents: number[];
+    private sizes: number[];
+    private maxValues: number[];
+
+    constructor(n: number) {
+        this.parents = Array.from({ length: n }, (_, i) => i);
+        this.sizes = Array(n).fill(1);
+        this.maxValues = Array.from({ length: n }, (_, i) => i);
+    }
+
+    private getRoot(i: number): number {
+        let rootIndex = i;
+        while (rootIndex !== this.parents[rootIndex]) {
+            rootIndex = this.parents[rootIndex];
+        } 
+        return rootIndex;        
+    }
+
+    public find(i: number): number {
+        let rootIndex = this.getRoot(i);
+
+        return this.maxValues[rootIndex];
+    }
+
+    public connected(p: number, q: number): boolean {
+        return this.getRoot(p) === this.getRoot(q);
+    }
+    public union(p: number, q: number) {
+        let rootAIndex = this.getRoot(p);
+        let rootBIndex = this.getRoot(q);
+        let sizeA = this.sizes[rootAIndex];
+        let sizeB = this.sizes[rootBIndex];
+        let sizeSum = sizeA + sizeB;
+        let max = Math.max(this.maxValues[rootAIndex], this.maxValues[rootBIndex])
+        if (sizeA >= sizeB) {
+            this.sizes[rootAIndex] = sizeSum;
+            this.parents[rootBIndex] = rootAIndex;
+            this.maxValues[rootAIndex] = max;
+        } else {
+            this.sizes[rootBIndex] = sizeSum;
+            this.parents[rootAIndex] = rootBIndex;  
+            this.maxValues[rootBIndex] = max;
+        }
+    }
+}
