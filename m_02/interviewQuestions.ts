@@ -59,13 +59,3 @@ function earliestTimestampAllConnected(n: number, logs: LogEntry[]): number | nu
     }
     return null;
 }
-
-/*
-ok hab ich das also richtig erfasst: ich halte fest wer chef ist und wie gross die menge in dem baum ist. 
-dafür nutze ich die zwei arrays und den find algo um den baum hochzuwandern. danach zähle ich groups n um 
-1 runter und wenn ich bei 1
-
-und wie sieht der find algo aus? speichere ich im array quasi den parent von d
-er node und springe dann da rüber und dann schau ich ob das selbst einen parent 
-hat und wenn ja mach ich weiter damit wenn nein bin ich beim chef angelangt? 
-*/
