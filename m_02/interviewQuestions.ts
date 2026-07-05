@@ -16,13 +16,7 @@ interface LogEntry {
     iB: number;
 }
 
-interface UnionDataType {
-    union(p: number, q: number): void
-    connected(p: number, q: number): boolean;
-    find(i: number): number;
-}
-
-class UnionFindExOne implements UnionDataType  {
+class UnionFindExOne {
     private parents: number[];
     private sizes: number[];
 
@@ -31,22 +25,25 @@ class UnionFindExOne implements UnionDataType  {
         this.sizes = Array(n).fill(1);
     }
 
-    public find(i: number): number {
+    private getRoot(i: number): number {
         let rootIndex = i;
         while (rootIndex !== this.parents[rootIndex]) {
             rootIndex = this.parents[rootIndex];
         } 
+        return rootIndex;        
+    }
 
-        return rootIndex;
+    public find(i: number): number {
+        return this.getRoot(i);
     }
 
     public connected(p: number, q: number): boolean {
-        return this.find(p) === this.find(q);
+        return this.getRoot(p) === this.getRoot(q);
     }
 
-    public union(p: number, q: number) {
-        let rootAIndex = this.find(p);
-        let rootBIndex = this.find(q);
+    private union(p: number, q: number) {
+        let rootAIndex = this.getRoot(p);
+        let rootBIndex = this.getRoot(q);
         let sizeA = this.sizes[rootAIndex];
         let sizeB = this.sizes[rootBIndex];
         let sizeSum = sizeA + sizeB;
@@ -58,29 +55,27 @@ class UnionFindExOne implements UnionDataType  {
             this.parents[rootAIndex] = rootBIndex;  
         }
     }
-}
 
+    public earliestAllConnected(n: number, logs: LogEntry[]): number | null {
+        let group = n;
+        let UnionFindInstance = new UnionFindExOne(n);
+        for (let i = 0; i < logs.length; i++) {
 
+            const currAIndex = logs[i].iA;
+            const currBIndex = logs[i].iB;
 
-function earliestTimestampAllConnected(n: number, logs: LogEntry[]): number | null {
-    let group = n;
-    let UnionFindInstance = new UnionFindExOne(n);
-    for (let i = 0; i < logs.length; i++) {
+            if (UnionFindInstance.connected(currAIndex, currBIndex)) 
+                continue;
+            
+            UnionFindInstance.union(currAIndex, currBIndex);
+            group--;
+            if (group === 1) {
+                return logs[i].timestamp;
+            }
 
-        const currAIndex = logs[i].iA;
-        const currBIndex = logs[i].iB;
-
-        if (UnionFindInstance.connected(currAIndex, currBIndex)) 
-            continue;
-        
-        UnionFindInstance.union(currAIndex, currBIndex);
-        group--;
-        if (group === 1) {
-            return logs[i].timestamp;
         }
-
+        return null; 
     }
-    return null;
 }
 
 /*
@@ -93,7 +88,7 @@ Wenn zum Beispiel eine der verbundenen Komponenten {1, 2, 6, 9} ist, dann sollte
 Elemente in den verbundenen Komponenten 9 zurückgeben.
 */
 
-class UnionFindExTwo implements UnionDataType  {
+class UnionFindExTwo  {
     private parents: number[];
     private sizes: number[];
     private maxValues: number[];
@@ -121,7 +116,7 @@ class UnionFindExTwo implements UnionDataType  {
     public connected(p: number, q: number): boolean {
         return this.getRoot(p) === this.getRoot(q);
     }
-    public union(p: number, q: number) {
+    private union(p: number, q: number) {
         let rootAIndex = this.getRoot(p);
         let rootBIndex = this.getRoot(q);
         let sizeA = this.sizes[rootAIndex];
@@ -137,5 +132,52 @@ class UnionFindExTwo implements UnionDataType  {
             this.parents[rootAIndex] = rootBIndex;  
             this.maxValues[rootBIndex] = max;
         }
+    }
+}
+
+/*
+3)
+Nachfolger mit Löschen. Gegeben eine Menge von n Ganzzahlen S = {0, 1, ..., n - 1} und eine Folge von Anfragen der folgenden Form:
+- Entfernen Sie x aus S
+- Finden Sie den Nachfolger von x: die kleinste y in S, so dass y >= x.
+entwerfen Sie einen Datentyp, bei dem alle Operationen (außer Konstruktion) im schlimmsten Fall logarithmische Zeit
+oder mehr benötigen
+*/
+
+
+class UnionFindExThree  {
+    private parents: number[];
+
+    constructor(n: number) {
+        this.parents = Array.from({ length: n + 1 }, (_, i) => i);
+    }
+
+    private getRoot(i: number): number {
+        let rootIndex = i;
+        while (rootIndex !== this.parents[rootIndex]) {
+            this.parents[rootIndex] = this.parents[this.parents[rootIndex]];
+            rootIndex = this.parents[rootIndex];
+        } 
+        return rootIndex;        
+    }
+
+    public find(i: number): number {
+        return this.getRoot(i);
+    }
+
+    public remove(i: number): void {
+        this.union(i, i + 1);
+    }
+
+    public connected(p: number, q: number): boolean {
+        return this.getRoot(p) === this.getRoot(q);
+    }
+    public union(p: number, q: number) {
+        let rootAIndex = this.getRoot(p);
+        let rootBIndex = this.getRoot(q);
+        if (rootAIndex === rootBIndex) {
+            return;
+        }
+        this.parents[rootAIndex] = rootBIndex;
     }
 }
