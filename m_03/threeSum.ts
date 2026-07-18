@@ -1,3 +1,4 @@
+// 1)
 // Find all unique triples in an array of ints that sum up to a specific target 
 // Should be O(n²)
 
@@ -34,6 +35,7 @@ function threeSum(arr: number[], target: number): number[][] {
     return results;
 }
 
+// 2)
 // Does a number exist in a bitonic array
 function hasNumberInBitonicArray(arr: number[], num: number): boolean {
     let low = 0;
@@ -82,4 +84,37 @@ function hasNumberInBitonicArray(arr: number[], num: number): boolean {
     }
 
     return false;
+}
+
+// 3)
+// 0 - 1 egg, <= T throws
+
+function burstEgg(s: number): boolean {
+    return Math.random() < 0.5;
+}
+function linearSearch(n: number): number {
+    let currentStory = 0;
+    for (currentStory = 1; currentStory <= n; currentStory++) {
+        if (burstEgg(currentStory)) {
+            return currentStory;
+        }
+    }
+
+    return n;
+}
+
+// 1 - 1 lg n eggs, ~ 1 lg n t hrows
+function divideConquer(n: number): number {
+    let low = 1;
+    let max = n;
+    while (low < max) {
+        let mid = Math.floor((low + max) / 2);
+        if (burstEgg(mid)) {
+            max = mid;
+        } else {
+            low = mid + 1;
+        }
+    }
+
+    return low;
 }
