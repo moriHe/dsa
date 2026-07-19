@@ -87,7 +87,7 @@ function hasNumberInBitonicArray(arr: number[], num: number): boolean {
 }
 
 // 3)
-// 0 - 1 egg, <= T throws
+// Version 0: 1 egg, <= T throws
 
 function burstEgg(s: number): boolean {
     return Math.random() < 0.5;
@@ -103,14 +103,13 @@ function linearSearch(n: number): number {
     return n;
 }
 
-// 1 - 1 lg n eggs, ~ 1 lg n t hrows
-function divideConquer(n: number): number {
-    let low = 1;
-    let max = n;
-    while (low < max) {
-        let mid = Math.floor((low + max) / 2);
+// Version 1: 1 lg n eggs, ~ 1 lg n throws
+// low is in this version and 2^k-1 in version 2
+function divideConquer(low = 1, high: number): number {
+    while (low < high) {
+        let mid = Math.floor((low + high) / 2);
         if (burstEgg(mid)) {
-            max = mid;
+            high = mid;
         } else {
             low = mid + 1;
         }
@@ -118,3 +117,53 @@ function divideConquer(n: number): number {
 
     return low;
 }
+
+// Version 2: lg T eggs, ~ 2 lg T throws
+function findRange(n: number): [number, number] {
+    let low = 1;
+    let high = 1;
+    while (!burstEgg(high)) {
+        low = high;
+        high = high * 2;
+        if (high > n) {
+            high = n;
+            break;
+        }
+    }
+    return [low, high];
+}
+function expoSearch(n: number): number {
+    let [low, high] = findRange(n);
+    return divideConquer(low, high);
+}
+
+// Version 3: 2 eggs, ~ 2 square root of n throws
+function squareRootDecomp(n: number): number {
+    const k = Math.floor(Math.sqrt(n));
+    let lastSafeFloor = 0;
+    let currentFloor = 0;
+    while (currentFloor < n) {
+        currentFloor += k;
+
+        if (burstEgg(currentFloor)) {
+            for (let i = lastSafeFloor + 1; i < currentFloor; i++) {
+                if (burstEgg(i)) {
+                    return i;
+                }
+            }
+            return currentFloor;
+        }
+
+        lastSafeFloor = currentFloor;
+    }
+
+    for (let i = lastSafeFloor + 1; i <= n; i++) {
+        if (burstEgg(i)) {
+            return i;
+        }
+    }
+
+    return n;
+}
+
+// Version 4: 2 eggs, throws <= c square root T
