@@ -167,3 +167,36 @@ function squareRootDecomp(n: number): number {
 }
 
 // Version 4: 2 eggs, throws <= c square root T
+function adaptiveSearch(n: number): number {
+    let k = 0
+    let totalFloors = 0;
+    while (totalFloors < n) {
+        k++;
+        totalFloors +=k;
+    }
+
+    let currentFloor = 0;
+
+    while (k > 0) {
+        let nextFloor = currentFloor + k;
+        
+        if (nextFloor > n) {
+            nextFloor = n;
+        }
+
+        if (burstEgg(nextFloor)) {
+            break;
+        }
+
+        currentFloor = nextFloor;
+        k--;
+    }
+
+    for (let f = currentFloor + 1; f <= n; f++) {
+        if (burstEgg(f)) {
+            return f;
+        }
+    }
+
+    return -1;
+}
