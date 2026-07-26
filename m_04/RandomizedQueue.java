@@ -45,11 +45,19 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new NoSuchElementException();
         }
-        // Remove at random
-        // Take last element of array and put it in the empty spot, decrease size
-        // array.length > minCapacity && size <= array.length / 4 -> half capacity of array
-
-        return null;
+        int rand = (int)(Math.random() * this.size);
+        Item val = this.array[rand];
+        this.size--;
+        this.array[rand] = this.array[size];
+        this.array[size] = null;
+        if (array.length > minCapacity && this.size <= this.array.length / 4) {
+            Item[] newArray = (Item[]) new Object[this.array.length / 2];
+            for (int i = 0; i < this.size; i++) {
+                newArray[i] = this.array[i];
+            }
+            this.array = newArray;
+        }
+        return val;
     }
 
     // return a random item (but do not remove it)
@@ -57,44 +65,64 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new NoSuchElementException();
         }
-        return null;
+        
+        int rand = (int)(Math.random() * this.size);
+        return this.array[rand];
     }
 
     // return an independent iterator over items in random order
     public Iterator<Item> iterator() {
-        return null;
+        return new IteratorImpl(this.array, this.size);
     }
 
     // unit testing (required)
     public static void main(String[] args) {
-    }
-
-    private class Node {
-        Item item;
-        Node next;
-        Node prev;
-        Node(Item item) {
-            this.item = item;
-            this.next = null;
-            this.prev = null;
+        RandomizedQueue<Integer> queue = new RandomizedQueue<Integer>();
+        queue.enqueue(1);
+        queue.enqueue(3);
+        queue.enqueue(5);
+        queue.enqueue(7);
+        queue.enqueue(9);
+        System.out.println("The queue has " + queue.size() + " elements. It is " + (queue.isEmpty() ? "empty" : "not empty" ) + ".");
+        Integer item = queue.dequeue();
+        System.out.println("Removed " + item + " at random.");
+        item = queue.sample();
+        System.out.println("Sampling a number: " + item);
+        Iterator<Integer> it = queue.iterator();
+        while (it.hasNext()) {
+            System.out.println(it.next());
         }
     }
 
     private class IteratorImpl implements Iterator<Item> {
-        Item current;
-        IteratorImpl(Item item) {
-            this.current = item;
+        Item[] array;
+        int idx = 0;
+        IteratorImpl(Item[] orgArr, int size) {
+            this.array = (Item[]) new Object[size];
+            for (int i = 0; i < size; i++) {
+                this.array[i] = orgArr[i];
+            }
+            for (int i = size - 1; i > 0; i--) {
+                int range = i - 0 + 1;
+                int rand = (int)(Math.random() * range);
+                Item left = this.array[i];
+                Item right = this.array[rand];
+                this.array[i] = right;
+                this.array[rand] = left;
+            }
         }
 
         public boolean hasNext() {
-            return this.current != null;
+            return idx < array.length;
         }
 
         public Item next() {
             if (!hasNext()) {
                 throw new NoSuchElementException("No more nodes in list");
             }
-            return null;
+            Item val = this.array[idx];
+            idx++;
+            return val;
         }
 
         public void remove() {
