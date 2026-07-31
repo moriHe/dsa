@@ -6,15 +6,32 @@ n instead of 2n?
 */
 function mergeWithOneAuxArray(sortedArray: number[]) {
     let n = Math.floor(sortedArray.length / 2);
-    let aux = sortedArray.slice(n);
+    let aux = sortedArray.slice(0, n);
 
-    let p = 0;
+    let p = n;
     let q = 0;
-    while (p < sortedArray.length) {
-        if (p >= n) {
-            sortedArray[p] = aux[q];
-            p++;
+    let i = 0;
+    while (i < sortedArray.length) {
+        if (p === sortedArray.length) {
+            sortedArray[i] = aux[q];
+            i++;
             q++;
+            continue;
+        } else if (q === aux.length) {
+            sortedArray[i] = sortedArray[p];
+            i++;
+            p++;
+            continue;
+        } else if (sortedArray[p] <= aux[q]) {
+            sortedArray[i] = sortedArray[p];
+            i++;
+            p++;
+            continue;
+        } else if (sortedArray[p] > aux[q]) {
+            sortedArray[i] = aux[q];
+            i++;
+            q++;
+            continue;
         }
     }
 }
