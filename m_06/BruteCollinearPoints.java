@@ -1,9 +1,22 @@
 import java.util.Arrays;
 
 public class BruteCollinearPoints {
-   LineSegment[] segments = new LineSegment[2];
+   private int nls = 0;
+   private LineSegment[] segments = new LineSegment[2];
 
 
+   private void addSegment(Point p, Point q) {
+      if (nls == segments.length) {
+         LineSegment[] cpy = new LineSegment[this.segments.length * 2];
+         for (int i = 0; i < segments.length; i++) {
+            cpy[i] = this.segments[i];
+         }
+         this.segments = cpy;
+      }
+
+      this.segments[nls] = new LineSegment(p, q);
+      nls++;
+   }
 
    public BruteCollinearPoints(Point[] points) {
       // finds all line segments containing 4 points
@@ -13,6 +26,7 @@ public class BruteCollinearPoints {
 
       Point[] copy = new Point[points.length];
       for (int i = 0; i < points.length; i++) {
+         if (points[i] == null) throw new IllegalArgumentException();
          copy[i] = points[i];
       }
       Arrays.sort(copy);
@@ -36,6 +50,7 @@ public class BruteCollinearPoints {
                         Point min = currI;
                         Point max = currI;
                         int ijcompare = currI.compareTo(currJ);
+                        // Cant be == since we check for this before  the loop
                         if (ijcompare > 0) min = currJ;
                         else max = currJ;
                         
@@ -48,6 +63,7 @@ public class BruteCollinearPoints {
                         int maxlcompare = max.compareTo(currL);
                         if (minlcompare > 0) min = currL;
                         if (maxlcompare < 0) max = currL;
+                        addSegment(min, max);
                      }
                }
             }         
@@ -56,10 +72,14 @@ public class BruteCollinearPoints {
    }
    public int numberOfSegments() {
     // the number of line segments
-    return 0;
+    return nls;
    }
    public LineSegment[] segments() {
     // the line segments
-    return null;
+    LineSegment[] res = new LineSegment[nls];
+    for (int i = 0; i < nls; i++) {
+      res[i] = this.segments[i];
+    }
+    return res;
    }
 }
