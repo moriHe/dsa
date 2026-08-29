@@ -84,13 +84,35 @@ function quickSort(arr: number[], lo: number, hi: number, pivotIdx: number, pivo
 function nutsAndBolts(nuts: number[], bolts: number[]): number[] {
     fisherYates(nuts);
     fisherYates(bolts);
-    console.log("nuts : " + nuts)
-    console.log("bolts: " + bolts)
+
 
     quickSort(nuts, 0, nuts.length - 1, 0, bolts)
-    console.log("nuts : " + nuts)
-    console.log("bolts: " + bolts)
+
     return [];
 }
 
-nutsAndBolts([1,5,3,2,7,8], [1,5,3,2,7,8])
+
+/**
+ * 2) Selection from two sorted arrays
+ * Given two sorted arrays a[] and b[], with lengths n1 and n2, 
+ * and an integer 0 ≤ k < n1 + n2, design an algorithm to find a 
+ * key of rank k. The order of growth of the worst-case running time 
+ * of your algorithm should be log n, where n = n1 + n2.
+    * Version 1: n1 = n2 (arrays of equal length) and k = n / 2 (median).
+    * Version 2: k = n / 2 (median).
+    * Version 3: no restrictions.
+ */
+
+function v1(a: number[], b: number[]) {
+    let mid = Math.floor(a.length / 2);
+    if (a[mid] < b[mid]) {
+        console.log(a[mid])
+        console.log(a.slice(a[mid], a[a.length - 1]))
+    }
+}
+v1([1,2,3,4,5], [6,7,8,9,10])
+// 1,2,4,5,6    3,4,7,9,10
+// 1,2,3,4,4,5,6,7,9,10
+
+// 1,2,4,12,13    3,4,7,9,10
+// 1,2,3,4,4,7,9,10,12,13
