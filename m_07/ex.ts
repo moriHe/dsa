@@ -103,16 +103,20 @@ function nutsAndBolts(nuts: number[], bolts: number[]): number[] {
     * Version 3: no restrictions.
  */
 
-function v1(a: number[], b: number[]) {
-    let mid = Math.floor(a.length / 2);
-    if (a[mid] < b[mid]) {
-        console.log(a[mid])
-        console.log(a.slice(a[mid], a[a.length - 1]))
+// TODO: Slice ersetzen mit lo/hi indexing
+function v1(a: number[], b: number[]): number {
+    if (a.length === 1) {
+        if (a[0] <= b[0]) return b[0]
+        else return a[0]
     }
+    let mid = Math.floor(a.length / 2);
+    let offset = a.length % 2 === 0 ? mid : mid + 1;
+    if (a[mid] < b[mid]) {
+        return v1(a.slice(mid), b.slice(0, offset))
+    } else if (a[mid] > b[mid]) {
+        return v1(a.slice(0, offset), b.slice(mid))
+    }
+    
+    return a[mid]
 }
-v1([1,2,3,4,5], [6,7,8,9,10])
-// 1,2,4,5,6    3,4,7,9,10
-// 1,2,3,4,4,5,6,7,9,10
-
-// 1,2,4,12,13    3,4,7,9,10
-// 1,2,3,4,4,7,9,10,12,13
+console.log(v1([0, 1, 2, 3, 4], [5, 6, 7, 8, 9]))
