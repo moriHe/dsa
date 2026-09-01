@@ -112,16 +112,19 @@ function v1(a: number[], b: number[], alo: number, ahi: number, blo: number, bhi
             Math.max(b[bhi], a[alo])
         );
     }
+
+    let offset = range % 2 === 0 ? 0 : 1;
     let amid = alo + Math.floor(range / 2); // 3 + 0
     let bmid = blo + Math.floor(range / 2); // 0 + 0
-    let offset = range % 2 === 0 ? 0 : 1;
     if (a[amid] < b[bmid]) {
-        return v1(a, b, amid+offset, ahi, blo, bmid)
+        return v1(a, b, amid, ahi, blo, bmid+offset)
     } else if (a[amid] > b[bmid]) {
-        return v1(a, b, alo, amid, bmid+offset, bhi)
+        return v1(a, b, alo, amid+offset, bmid, bhi)
     }
     
     return a[amid]
 }
 console.log(v1([0, 1, 2, 3, 4], [5, 6, 7, 8, 9], 0, 4, 0, 4))
-console.log(v1([0, 1, 2, 3, 10, 200], [6, 7, 9, 12, 30, 33], 0, 3, 0, 3))
+console.log(v1([0, 1, 2, 3, 10, 200], [6, 7, 9, 12, 30, 33], 0, 5, 0, 5))
+console.log(v1([0,1,5,6], [2,3,4,7], 0, 3, 0, 3))
+// 0,1,2,3,4,5,6,7
