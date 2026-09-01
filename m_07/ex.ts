@@ -104,19 +104,25 @@ function nutsAndBolts(nuts: number[], bolts: number[]): number[] {
  */
 
 // TODO: Slice ersetzen mit lo/hi indexing
-function v1(a: number[], b: number[]): number {
-    if (a.length === 1) {
-        if (a[0] <= b[0]) return b[0]
-        else return a[0]
+function v1(a: number[], b: number[], alo: number, ahi: number, blo: number, bhi: number): number {
+    let range = ahi - alo
+
+    if (range === 1) {
+        return Math.min(
+            Math.max(a[ahi], b[blo]),
+            Math.max(b[bhi], a[alo])
+        );
     }
-    let mid = Math.floor(a.length / 2);
-    let offset = a.length % 2 === 0 ? mid : mid + 1;
-    if (a[mid] < b[mid]) {
-        return v1(a.slice(mid), b.slice(0, offset))
-    } else if (a[mid] > b[mid]) {
-        return v1(a.slice(0, offset), b.slice(mid))
+    let amid = alo + Math.floor(range / 2); // 3 + 0
+    let bmid = blo + Math.floor(range / 2); // 0 + 0
+    let offset = range % 2 === 0 ? 0 : 1;
+    if (a[amid] < b[bmid]) {
+        return v1(a, b, amid+offset, ahi, blo, bmid)
+    } else if (a[amid] > b[bmid]) {
+        return v1(a, b, alo, amid, bmid+offset, bhi)
     }
     
-    return a[mid]
+    return a[amid]
 }
-console.log(v1([0, 1, 2, 3, 4], [5, 6, 7, 8, 9]))
+console.log(v1([0, 1, 2, 3, 4], [5, 6, 7, 8, 9], 0, 4, 0, 4))
+console.log(v1([0, 1, 2, 3, 10, 200], [6, 7, 9, 12, 30, 33], 0, 3, 0, 3))
