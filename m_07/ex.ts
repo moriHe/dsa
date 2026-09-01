@@ -103,7 +103,6 @@ function nutsAndBolts(nuts: number[], bolts: number[]): number[] {
     * Version 3: no restrictions.
  */
 
-// TODO: Slice ersetzen mit lo/hi indexing
 function v1(a: number[], b: number[], alo: number, ahi: number, blo: number, bhi: number): number {
     let range = ahi - alo
 
