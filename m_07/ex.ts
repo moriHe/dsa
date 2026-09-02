@@ -124,7 +124,12 @@ function v1(a: number[], b: number[], alo: number, ahi: number, blo: number, bhi
     
     return a[amid]
 }
-console.log(v1([0, 1, 2, 3, 4], [5, 6, 7, 8, 9], 0, 4, 0, 4))
-console.log(v1([0, 1, 2, 3, 10, 200], [6, 7, 9, 12, 30, 33], 0, 5, 0, 5))
-console.log(v1([0,1,5,6], [2,3,4,7], 0, 3, 0, 3))
+
+function v2(a: number[], b: number[]): number {
+    let k = a.length + b.length
+    
+    return 0;
+}
+
+console.log(v2([0,1,2,3,4], [5,6,7,8,9,10,11,12,13]))
 // 0,1,2,3,4,5,6,7
