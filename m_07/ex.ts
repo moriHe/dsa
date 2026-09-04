@@ -125,11 +125,36 @@ function v1(a: number[], b: number[], alo: number, ahi: number, blo: number, bhi
     return a[amid]
 }
 
-function v2(a: number[], b: number[]): number {
-    let k = a.length + b.length
-    
-    return 0;
+function v2and3(a: number[], ai: number, b: number[], bi: number, k: number): number {
+    if (k === 0) {
+        return Math.min(a[ai], b[bi])
+    }
+    let t = k + 1; // Anzahl Elemente
+    let p = Math.floor(t / 2); // Anzahl für Vergleich aus array a
+    let pi = p - 1; // Index des letzten Elements der Anzahl p
+    let q = t - p; // Anzahl für Vergleich aus array b
+    let qi = q - 1; // Index des letzten Elements der Anzahl q
+
+
+    if (ai+pi > a.length - 1) {
+        let tmp = ai+pi - a.length - 1
+        ai = a.length - 1
+        p = 0
+        qi = qi + tmp
+    }
+    if (a[ai+pi] < b[bi+qi]) {
+        ai = ai + p;
+        console.log(k,p)
+        k = k - p
+    } else if (a[ai+pi] > b[bi+qi]) {
+        bi = bi + q;
+        k = k - q
+    } else {
+        return a[ai+pi]
+    }
+
+    return v2and3(a, ai, b, bi, k)
 }
 
-console.log(v2([0,1,2,3,4], [5,6,7,8,9,10,11,12,13]))
-// 0,1,2,3,4,5,6,7
+console.log(v2and3([0,1,2,3,4], 0, [5,6,7,8,9,10,11,12,13], 0, 10))
+// 0,1,2,3,4,5,6,7,8,9,10,11,12,13
