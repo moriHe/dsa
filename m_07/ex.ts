@@ -103,60 +103,7 @@ function nutsAndBolts(nuts: number[], bolts: number[]): number[] {
     * Version 3: no restrictions.
  */
 
-function v1(a: number[], b: number[], alo: number, ahi: number, blo: number, bhi: number): number {
-    let range = ahi - alo
-
-    if (range === 1) {
-        return Math.min(
-            Math.max(a[ahi], b[blo]),
-            Math.max(b[bhi], a[alo])
-        );
-    }
-
-    let offset = range % 2 === 0 ? 0 : 1;
-    let amid = alo + Math.floor(range / 2); // 3 + 0
-    let bmid = blo + Math.floor(range / 2); // 0 + 0
-    if (a[amid] < b[bmid]) {
-        return v1(a, b, amid, ahi, blo, bmid+offset)
-    } else if (a[amid] > b[bmid]) {
-        return v1(a, b, alo, amid+offset, bmid, bhi)
-    }
-    
-    return a[amid]
-}
-
-/*function v2and3(a: number[], ai: number, b: number[], bi: number, k: number): number {
-    if (k === 0) {
-        return Math.min(a[ai], b[bi])
-    }
-    let t = k + 1; // Anzahl Elemente
-    let p = Math.floor(t / 2); // Anzahl für Vergleich aus array a
-    let pi = p - 1; // Index des letzten Elements der Anzahl p
-    let q = t - p; // Anzahl für Vergleich aus array b
-    let qi = q - 1; // Index des letzten Elements der Anzahl q
-
-
-    if (ai+pi > a.length - 1) {
-        let tmp = ai+pi - a.length - 1
-        ai = a.length - 1
-        p = 0
-        qi = qi + tmp
-    }
-    if (a[ai+pi] < b[bi+qi]) {
-        ai = ai + p;
-        console.log(k,p)
-        k = k - p
-    } else if (a[ai+pi] > b[bi+qi]) {
-        bi = bi + q;
-        k = k - q
-    } else {
-        return a[ai+pi]
-    }
-
-    return v2and3(a, ai, b, bi, k)
-}*/
-
-function v2and3(a: number[], b: number[], k: number, baseAIndex: number, baseBIndex: number): number {
+function v12and3(a: number[], b: number[], k: number, baseAIndex: number, baseBIndex: number): number {
     // k = index of searched element in combined array
     // k + 1 = nth element of the array
     // eg k = 3 -> search for ab[3] which is the 4th element
@@ -205,12 +152,12 @@ function v2and3(a: number[], b: number[], k: number, baseAIndex: number, baseBIn
         n = n - nleft
         k = n - 1
         
-        return v2and3(a, b, k, baseAIndex, baseBIndex)
+        return v12and3(a, b, k, baseAIndex, baseBIndex)
     } else if (a[baseAIndex + nleftindex] > b[baseBIndex + nrightindex]) {
         baseBIndex = baseBIndex + nright
         n = n - nright
         k = n - 1
-        return v2and3(a, b, k, baseAIndex, baseBIndex)
+        return v12and3(a, b, k, baseAIndex, baseBIndex)
     } else {
         console.log("Here")
         console.log(baseAIndex, nleftindex)
@@ -218,7 +165,4 @@ function v2and3(a: number[], b: number[], k: number, baseAIndex: number, baseBIn
     }
 
 }
-console.log(v2and3([0,1,5,7,9], [2,6,8,10,11,12,13,14,15], 7, 0, 0))
-// 0,1,2,5,6,7,8,9,10,11,12,13,14,15
-//console.log(v2and3([0,1,5,7,9, 100, 101, 102, 103], [2,6,8,10,11,12,13,14,15], 3, 0, 0))
-// 0, 1, 2, 5, 6, 7, 9, ... gesucht bei k = 3 ist die 5
+console.log(v12and3([0,1,5,7,9], [2,6,8,10,11,12,13,14,15], 7, 0, 0))
