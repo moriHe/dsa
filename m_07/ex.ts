@@ -173,11 +173,34 @@ function v2and3(a: number[], b: number[], k: number, baseAIndex: number, baseBIn
         return Math.min(a[baseAIndex], b[baseBIndex])
     }
 
+    console.log("Before")
+    console.log(baseAIndex, nleftindex, baseBIndex, nrightindex)
+    if (baseAIndex > a.length - 1) {
+        return b[baseBIndex + k]
+    } else if (baseBIndex > b.length - 1) {
+        return a[baseAIndex + k]
+    }
     if((baseAIndex + nleftindex) > a.length - 1) {
-        console.log("upsi")
+        console.log("x")
+        console.log(nleft, a.length, baseAIndex)
+        let tmp = nleft - (a.length - baseAIndex)
+        nleft = tmp
+        nright = nright + tmp
+        nleftindex = nleft - 1
+        nrightindex = nright - 1
+        console.log("xx")
+        
     } else if ((baseBIndex + nrightindex) > b.length - 1) {
-        console.log("daisy")
-    } else if (a[baseAIndex + nleftindex] < b[baseBIndex + nrightindex]) {
+        console.log("y")
+        let tmp = nright - (b.length - baseBIndex)
+        nright = tmp
+        nleft = nleft + tmp
+        nleftindex = nleft - 1
+        nrightindex = nright - 1
+    }
+    console.log("After")
+    console.log(baseAIndex, nleftindex, baseBIndex, nrightindex)
+    if (a[baseAIndex + nleftindex] < b[baseBIndex + nrightindex]) {
         baseAIndex = baseAIndex + nleft
         n = n - nleft
         k = n - 1
@@ -189,12 +212,13 @@ function v2and3(a: number[], b: number[], k: number, baseAIndex: number, baseBIn
         k = n - 1
         return v2and3(a, b, k, baseAIndex, baseBIndex)
     } else {
+        console.log("Here")
+        console.log(baseAIndex, nleftindex)
         return a[baseAIndex+nleftindex]
     }
 
-return 0
 }
 console.log(v2and3([0,1,5,7,9], [2,6,8,10,11,12,13,14,15], 7, 0, 0))
-// 0,1,2,5,6,8,... gesucht bei k = 3 ist 5
+// 0,1,2,5,6,7,8,9,10,11,12,13,14,15
 //console.log(v2and3([0,1,5,7,9, 100, 101, 102, 103], [2,6,8,10,11,12,13,14,15], 3, 0, 0))
 // 0, 1, 2, 5, 6, 7, 9, ... gesucht bei k = 3 ist die 5
