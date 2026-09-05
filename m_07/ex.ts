@@ -125,7 +125,7 @@ function v1(a: number[], b: number[], alo: number, ahi: number, blo: number, bhi
     return a[amid]
 }
 
-function v2and3(a: number[], ai: number, b: number[], bi: number, k: number): number {
+/*function v2and3(a: number[], ai: number, b: number[], bi: number, k: number): number {
     if (k === 0) {
         return Math.min(a[ai], b[bi])
     }
@@ -154,7 +154,47 @@ function v2and3(a: number[], ai: number, b: number[], bi: number, k: number): nu
     }
 
     return v2and3(a, ai, b, bi, k)
-}
+}*/
 
-console.log(v2and3([0,1,2,3,4], 0, [5,6,7,8,9,10,11,12,13], 0, 10))
-// 0,1,2,3,4,5,6,7,8,9,10,11,12,13
+function v2and3(a: number[], b: number[], k: number, baseAIndex: number, baseBIndex: number): number {
+    // k = index of searched element in combined array
+    // k + 1 = nth element of the array
+    // eg k = 3 -> search for ab[3] which is the 4th element
+    let n = k+1
+    let nleft = Math.floor(n / 2)
+    let nleftindex = nleft - 1
+    let nright = n - nleft
+    let nrightindex = nright - 1
+
+    if (k === 0) {
+        console.log(baseAIndex, baseBIndex)
+        if (baseAIndex > a.length - 1) return b[baseBIndex]
+        if (baseBIndex > b.length - 1) return a[baseAIndex]
+        return Math.min(a[baseAIndex], b[baseBIndex])
+    }
+
+    if((baseAIndex + nleftindex) > a.length - 1) {
+        console.log("upsi")
+    } else if ((baseBIndex + nrightindex) > b.length - 1) {
+        console.log("daisy")
+    } else if (a[baseAIndex + nleftindex] < b[baseBIndex + nrightindex]) {
+        baseAIndex = baseAIndex + nleft
+        n = n - nleft
+        k = n - 1
+        
+        return v2and3(a, b, k, baseAIndex, baseBIndex)
+    } else if (a[baseAIndex + nleftindex] > b[baseBIndex + nrightindex]) {
+        baseBIndex = baseBIndex + nright
+        n = n - nright
+        k = n - 1
+        return v2and3(a, b, k, baseAIndex, baseBIndex)
+    } else {
+        return a[baseAIndex+nleftindex]
+    }
+
+return 0
+}
+console.log(v2and3([0,1,5,7,9], [2,6,8,10,11,12,13,14,15], 7, 0, 0))
+// 0,1,2,5,6,8,... gesucht bei k = 3 ist 5
+//console.log(v2and3([0,1,5,7,9, 100, 101, 102, 103], [2,6,8,10,11,12,13,14,15], 3, 0, 0))
+// 0, 1, 2, 5, 6, 7, 9, ... gesucht bei k = 3 ist die 5
