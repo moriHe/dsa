@@ -165,4 +165,66 @@ function v12and3(a: number[], b: number[], k: number, baseAIndex: number, baseBI
     }
 
 }
-console.log(v12and3([0,1,5,7,9], [2,6,8,10,11,12,13,14,15], 7, 0, 0))
+// console.log(v12and3([0,1,5,7,9], [2,6,8,10,11,12,13,14,15], 7, 0, 0))
+
+/**
+ * 3) Decimal Dominants
+ * Design an algorithm for an array of n keys that finds all values that occure more than n / 10 times.
+ * The expected running time of your algorithm should be linear
+ */
+
+function decimalDominants(arr: number[], k: number): number[] {
+    let threshold = Math.floor(arr.length / k)
+    let candidates: Record<string, number> = {}
+    let nc = 0
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] in candidates) {
+            candidates[arr[i]] = candidates[arr[i]] + 1
+            continue
+        }
+        if (nc < threshold) {
+            candidates[arr[i]] = 1
+
+            nc++
+            continue
+        }
+        for (const key in candidates) {
+            let v = candidates[key] - 1
+            if (v === 0) {
+                delete candidates[key]
+                nc--
+            } else {
+                candidates[key] = v
+            }
+        }
+
+    }
+    let result: number[] = []
+    let secondRound: Record<string,number> = {}
+    for (let i = 0; i < arr.length; i++) {
+        if (arr[i] in candidates) {
+            if (!(arr[i] in secondRound)) {
+                secondRound[arr[i]] = 0
+            }
+            secondRound[arr[i]] = secondRound[arr[i]] + 1
+        }
+    }
+    for (const key in secondRound) {
+        if (secondRound[key] > threshold) {
+            result.push(parseInt(key))
+        }
+    }
+    return result
+}
+
+decimalDominants([
+    1,1,1,1,1,1,1,1,1,1,1,
+    2,2,2,2,2,2,2,2,2,2,2,
+    3,3,3,3,3,3,3,3,3,3,
+    4,4,4,4,4,
+    5,5,5,5,5,5,5,5,
+    6,6,6,6,
+    7,7,7,7,7,7,7,7,7,7,7,7,
+    8,8,8,8,8,8,
+    9,9,9,9,9,9,
+], 10)
