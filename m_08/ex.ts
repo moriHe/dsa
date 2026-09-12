@@ -174,29 +174,60 @@ class DynamicMedian {
 
 }
 
-const dm = new DynamicMedian()
+/**
+ * 2) Randomized priority queue
+ * Describe how to add the methods sample() and delRandom() to our binary heap implementation.
+ * The two methods return a key that is chosen uniformly at random among the remaining keys,
+ * with the latter method also removing that key. The sample() method should take
+ * constant time; the delRandom() method should take logarithmic time. Do not worry about resizing
+ * the underlying array.
+ */
 
-dm.insert(5)
-console.log("expected: 5, median:", dm.median()) // 5
+class PriorityQueue {
+    heap: number[]
+    freeidx: number
 
-dm.insert(10)
-console.log("expected: 5, median:", dm.median()) // 5
+    constructor() {
+        this.heap = []
+        this.freeidx = 0
+    }
 
-dm.insert(3)
-console.log("expected: 5, median:", dm.median()) // 5
+    insert(x: number) {
+        this.heap[this.freeidx] = x
+        this.freeidx++
+        this.bubbleUp()
 
-dm.insert(8)
-console.log("expected: 5, median:", dm.median()) // 5
+    }
 
-dm.insert(1)
-console.log("expected: 5, median:", dm.median()) // 5
+    bubbleUp() {
+        let childIndex = this.freeidx - 1
+        let parentIndex = Math.floor((childIndex - 1) / 2)
+        while (true) {
+            if (childIndex === 0)
+                break
 
-dm.insert(7)
-console.log("expected: 5, median:", dm.median()) // 5
+            if (this.heap[childIndex] < this.heap[parentIndex]) {
+                let tmp = this.heap[childIndex]
+                this.heap[childIndex] = this.heap[parentIndex]
+                this.heap[parentIndex] = tmp
+                childIndex = parentIndex
+                parentIndex =  Math.floor((childIndex - 1) / 2)
+            } else {
+                break
+            }
 
+        }
+    }
 
-console.log("expected: 5, removed:", dm.removeMedian()) // 5
-console.log("expected: 7, new median:", dm.median())    // 7
+    bubbleDown() {
+        
+    }
 
-console.log("expected: 7, removed:", dm.removeMedian()) // 7
-console.log("expected: 3, new median:", dm.median())    // 3
+    sample() {
+
+    }
+
+    delRandom() {
+
+    }
+}
