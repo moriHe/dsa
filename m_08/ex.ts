@@ -195,12 +195,11 @@ class PriorityQueue {
     insert(x: number) {
         this.heap[this.freeidx] = x
         this.freeidx++
-        this.bubbleUp()
+        this.bubbleUp(this.freeidx - 1)
 
     }
 
-    bubbleUp() {
-        let childIndex = this.freeidx - 1
+    bubbleUp(childIndex: number) {
         let parentIndex = Math.floor((childIndex - 1) / 2)
         while (true) {
             if (childIndex === 0)
@@ -219,15 +218,59 @@ class PriorityQueue {
         }
     }
 
-    bubbleDown() {
-        
+    bubbleDown(parentIndex: number) {
+        while (true) {
+            let childIndexLeft = 2 * parentIndex + 1
+            let childIndexRight = 2 * parentIndex + 2
+            if (childIndexLeft > this.freeidx - 1) {
+                break
+            }
+
+            if (childIndexRight > this.freeidx - 1) {
+                if (this.heap[childIndexLeft] < this.heap[parentIndex]) {
+                    let tmp = this.heap[childIndexLeft]
+                    this.heap[childIndexLeft] = this.heap[parentIndex]
+                    this.heap[parentIndex] = tmp
+                }
+
+                break;
+            }
+
+            if (this.heap[parentIndex] <= this.heap[childIndexLeft] && this.heap[parentIndex] <= this.heap[childIndexRight]) {
+                break;
+            }
+            
+            if (this.heap[childIndexLeft] <= this.heap[childIndexRight]) {
+                let tmp = this.heap[childIndexLeft]
+                this.heap[childIndexLeft] = this.heap[parentIndex]
+                this.heap[parentIndex] = tmp
+                parentIndex = childIndexLeft
+            } else {
+                let tmp = this.heap[childIndexRight]
+                this.heap[childIndexRight] = this.heap[parentIndex]
+                this.heap[parentIndex] = tmp
+                parentIndex = childIndexRight
+            }
+        }
+    }
+
+    getRandomIndex() {
+        return Math.floor(Math.random() * this.freeidx)
     }
 
     sample() {
-
+        return this.heap[this.getRandomIndex()]
     }
 
     delRandom() {
-
+        let randomIndex = this.getRandomIndex()
+        let resp = this.heap[randomIndex]
+        this.heap[randomIndex] = this.heap[this.freeidx - 1]
+        this.freeidx--
+        if (randomIndex < this.freeidx) {
+            this.bubbleUp(randomIndex)
+            this.bubbleDown(randomIndex)
+        }
+        return resp
     }
 }
