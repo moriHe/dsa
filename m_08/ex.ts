@@ -274,3 +274,113 @@ class PriorityQueue {
         return resp
     }
 }
+
+
+/**
+ * 3) Taxicab numbers
+ * A taxicab number is an integer that can be expressed as the sum of two cubes of positive integers in 
+ * two different ways: a³ + b³ = c³ + d³. For example, 1729 is the smallest taxicab number:
+ * 9³ + 10³ = 1³ + 12³. Design an algorithm to find all taxicab numbers with a, b, c and d less than n.
+ * - Version 1: Use time proportional to n² log n and space proporional to n².
+ * - Version 2: Use time proportional to n² log n and space proportional to n.
+ */
+
+type El = {
+    sum: number,
+    a: number,
+    b: number
+}
+
+type ABCD = {
+    a: number,
+    b: number,
+    c: number,
+    d: number
+}
+
+function merge(arr: El[], left: number, mid: number, right: number) {
+    const n1 = mid - left + 1
+    const n2 = right - mid
+
+    const L = new Array<El>(n1)
+    const R = new Array<El>(n2)
+
+    for (let i = 0; i < n1; i++) {
+        L[i] = arr[left + i]
+    }
+
+    for (let j = 0; j < n2; j++) {
+        R[j] = arr[mid + 1 + j]
+    }
+
+    let i = 0, j = 0
+    let k = left
+    while (i < n1 && j < n2) {
+        if (L[i].sum <= R[j].sum) {
+            arr[k] = L[i]
+            i++
+        } else {
+            arr[k] = R[j]
+            j++
+        }
+        k++
+    }
+
+    while (i < n1) {
+        arr[k] = L[i]
+        i++
+        k++
+    }
+
+    while (j < n2) {
+        arr[k] = R[j]
+        j++
+        k++
+    }
+}
+
+function mergeSort(arr: El[], left: number, right: number) {
+    if (left >= right) {
+        return;
+    }
+    const mid = Math.floor(left + (right - left) / 2)
+    mergeSort(arr, left, mid)
+    mergeSort(arr, mid + 1, right)
+    merge(arr, left, mid, right)
+}
+
+function taxicabNumbersV1(n: number): ABCD[] {
+    let els: El[] = []
+    for (let i = 1; i < n-1; i++) {
+        for (let j = i + 1; j < n; j++) {
+            els.push({
+                sum: i*i*i + j*j*j,
+                a: i,
+                b: j
+            })
+        }
+    }
+    
+    mergeSort(els, 0, els.length - 1)
+
+    let resp: ABCD[] = []
+    let candidate: El = els[0]
+    let found = false
+    for (let i = 1; i < els.length; i++) {
+        if (candidate.sum === els[i].sum) {
+            if (found)
+                continue
+            found = true
+            resp.push({
+                a: candidate.a,
+                b: candidate.b,
+                c: els[i].a,
+                d: els[i].b
+            })
+        } else {
+            candidate = els[i]
+            found = false
+        }
+    }
+    return resp;
+}
