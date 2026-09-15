@@ -384,3 +384,109 @@ function taxicabNumbersV1(n: number): ABCD[] {
     }
     return resp;
 }
+
+function bubbleUp(arr: El[]) {
+    let childIndex = arr.length - 1
+    let parentIndex = Math.floor((childIndex - 1) / 2)
+    while (true) {
+        if (childIndex === 0)
+            break
+
+        if (arr[childIndex].sum < arr[parentIndex].sum) {
+            let tmp = arr[childIndex]
+            arr[childIndex] = arr[parentIndex]
+            arr[parentIndex] = tmp
+            childIndex = parentIndex
+            parentIndex =  Math.floor((childIndex - 1) / 2)
+        } else {
+            break
+        }
+
+    }
+}
+
+function bubbleDown(arr: El[]) {
+    let parentIndex = 0
+
+
+    while (true) {
+        let childIndexLeft = 2 * parentIndex + 1
+        let childIndexRight = 2 * parentIndex + 2
+        if (childIndexLeft > arr.length - 1) {
+            break
+        }
+        if (childIndexRight > arr.length - 1) {
+            if (arr[parentIndex].sum <= arr[childIndexLeft].sum) {
+                break
+            } else {
+                let tmp = arr[childIndexLeft]
+                arr[childIndexLeft] = arr[parentIndex]
+                arr[parentIndex] = tmp
+                parentIndex = childIndexLeft
+                continue
+            } 
+        }
+
+        if (arr[parentIndex].sum <= arr[childIndexLeft].sum && arr[parentIndex].sum <= arr[childIndexRight].sum) {
+            break;
+        }
+
+        if (arr[childIndexLeft] <= arr[childIndexRight]) {
+            let tmp = arr[childIndexLeft]
+            arr[childIndexLeft] = arr[parentIndex]
+            arr[parentIndex] = tmp
+            parentIndex = childIndexLeft
+        } else {
+            let tmp = arr[childIndexRight]
+            arr[childIndexRight] = arr[parentIndex]
+            arr[parentIndex] = tmp
+            parentIndex = childIndexRight
+        }
+
+    }
+}
+
+function taxicabNumbersV2(n: number) {
+    let els: El[] = []
+    for (let i = 1; i < n; i++) {
+        let j = i+1
+        els.push({
+            sum: i*i*i + j*j*j,
+            a: i,
+            b: j
+        })
+    }
+
+    let end = false
+    let resp: ABCD[] = []
+    let currentSum = 0
+    while (!end) {
+        if (els.length === 1) {
+            break
+        }
+        if (els[0].sum === currentSum) {
+            let tmp = els[0]
+            els[0] = els[els.length - 1]
+            let nextA = tmp.a + 1
+            let nextB = tmp.b + 1
+            if (nextA < n - 2) {
+                els[els.length - 1] = {
+                    sum: nextA * nextA * nextA + nextB * nextB * nextB,
+                    a: nextA,
+                    b: nextB
+                }
+            }
+
+            bubbleUp(els)
+        }
+
+        if (els[0].sum === els[1].sum) {
+            resp.push({
+                a: els[0].a,
+                b: els[0].b,
+                c: els[1].a,
+                d: els[1].b
+            })
+        }
+    }
+}
