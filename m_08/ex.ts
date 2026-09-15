@@ -467,6 +467,7 @@ function taxicabNumbersV2(n: number) {
         if (els[0].sum === currentSum) {
             let tmp = els[0]
             els[0] = els[els.length - 1]
+            bubbleDown(els)
             let nextA = tmp.a + 1
             let nextB = tmp.b + 1
             if (nextA < n - 2) {
@@ -475,9 +476,8 @@ function taxicabNumbersV2(n: number) {
                     a: nextA,
                     b: nextB
                 }
+                bubbleUp(els)
             }
-
-            bubbleUp(els)
         }
 
         if (els[0].sum === els[1].sum) {
@@ -487,6 +487,22 @@ function taxicabNumbersV2(n: number) {
                 c: els[1].a,
                 d: els[1].b
             })
+            let tmp = els[0]
+            els[0] = els[els.length - 1]
+            bubbleDown(els)
+            let nextA = tmp.a + 1
+            let nextB = tmp.b + 1
+            if (nextA < n - 2) {
+                els[els.length - 1] = {
+                    sum: nextA * nextA * nextA + nextB * nextB * nextB,
+                    a: nextA,
+                    b: nextB
+                }
+                bubbleUp(els)
+            }
+        
         }
     }
+
+    return resp
 }
