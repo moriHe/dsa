@@ -58,7 +58,6 @@ public class FastCollinearPoints {
                   Point max = curr;
                   boolean isvalid = true;
                   for (int k = j-1; k >= j-count; k--) {
-                     // TODO curr.compareTo(copy[k]);
                      int mincompare = min.compareTo(copy[k]);
                      int maxcompare = max.compareTo(copy[k]);
                      if (maxcompare < 0) max = copy[k];
@@ -82,7 +81,6 @@ public class FastCollinearPoints {
                   Point max = curr;
                   boolean isvalid = true;
                   for (int k = copy.length-1; k >= copy.length-count; k--) {
-                     // TODO curr.compareTo(copy[k]);
                      int mincompare = min.compareTo(copy[k]);
                      int maxcompare = max.compareTo(copy[k]);
                      if (maxcompare < 0) max = copy[k];
