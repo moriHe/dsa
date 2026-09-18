@@ -28,16 +28,41 @@ public class Board {
 
     // board dimension n
     public int dimension() {
-        return 0;
+        return this.n;
     }
 
     // number of tiles out of place
     public int hamming() {
-        return 0;
+        int nwrong = 0;
+        for (int i = 0; i < this.tiles.length; i++) {
+            for (int j = 0; j < this.tiles[i].length; j++) {
+                int correct = i * n + j + 1;
+                if (i == n - 1 && j == n - 1) {
+                    correct = 0;
+                }
+
+                if (this.tiles[i][j] != correct) {
+                    nwrong++;
+                }
+            }
+        }
+        return nwrong;
     }
 
     // sum of Manhattan distances between tiles and goal
     public int manhattan() {
+        int distancesum = 0;
+        for (int i = 0; i < this.tiles.length; i++) {
+            for (int j = 0; j < this.tiles[i].length; j++) {
+                if (this.tiles[i][j] != 0) {
+                    int goalRow = (this.tiles[i][j] - 1) / n;
+                    int goalCol = (this.tiles[i][j] - 1) % n;
+                    boolean isCorrectRow = goalRow == i;
+                    boolean isCorrectCol = goalCol == j;
+                }
+
+            }
+        }
         return 0;
     }
 
