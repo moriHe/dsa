@@ -1,4 +1,8 @@
 /* Configure Classpath add m_08 / others Add Source root um package zu umgehen */
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Board {
     private int[][] tiles;
     private int n;
@@ -57,27 +61,53 @@ public class Board {
                 if (this.tiles[i][j] != 0) {
                     int goalRow = (this.tiles[i][j] - 1) / n;
                     int goalCol = (this.tiles[i][j] - 1) % n;
-                    boolean isCorrectRow = goalRow == i;
-                    boolean isCorrectCol = goalCol == j;
+                    distancesum += Math.abs(i - goalRow);
+                    distancesum += Math.abs(j - goalCol);
                 }
-
             }
         }
-        return 0;
+        return distancesum;
     }
 
     // is this board the goal board?
     public boolean isGoal() {
-        return false;
+        return hamming() == 0;
     }
 
     // does this board equal y?
     public boolean equals(Object y) {
-        return false;
+        if (!(y instanceof Board)) {
+            return false;
+        }
+        Board that = (Board) y;
+        if (this.dimension() != that.dimension()) {
+            return false;
+        }
+
+        for (int i = 0; i < this.tiles.length; i++) {
+            for (int j = 0; j < this.tiles[i].length; j++) {
+                if (this.tiles[i][j] != that.tiles[i][j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     // all neighboring boards
     public Iterable<Board> neighbors() {
+        List<Board> neighbors = new ArrayList<>();
+        int row = 0;
+        int col = 0;
+        for (int i = 0; i < this.tiles.length; i++) {
+            for (int j = 0; j < this.tiles[i].length; j++) {
+                if (this.tiles[i][j] == 0) {
+                    row = i;
+                    col = j;
+                    break;
+                }
+            }
+        }
         return null;
     }
 
