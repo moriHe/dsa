@@ -94,6 +94,16 @@ public class Board {
         return true;
     }
 
+    private Board getCopyBoard() {
+        int[][] copy = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                copy[i][j] = this.tiles[i][j];
+            }
+        }
+        return new Board(copy);
+    }
+
     // all neighboring boards
     public Iterable<Board> neighbors() {
         List<Board> neighbors = new ArrayList<>();
@@ -108,12 +118,77 @@ public class Board {
                 }
             }
         }
-        return null;
+
+        int topRow = row - 1;
+        int bottomRow = row + 1;
+        int leftCol = col - 1;
+        int rightCol = col + 1;
+
+        if (topRow >= 0) {
+            Board c1 = getCopyBoard();
+            c1.tiles[row][col] = c1.tiles[topRow][col];
+            c1.tiles[topRow][col] = 0;
+            neighbors.add(c1);
+        }
+
+        if (bottomRow < n) {
+            Board c2 = getCopyBoard();
+            c2.tiles[row][col] = c2.tiles[bottomRow][col];
+            c2.tiles[bottomRow][col] = 0;
+            neighbors.add(c2);
+        }
+
+        if (leftCol >= 0) {
+            Board c3 = getCopyBoard();
+            c3.tiles[row][col] = c3.tiles[row][leftCol];
+            c3.tiles[row][leftCol] = 0;
+            neighbors.add(c3);
+        } 
+
+        if (rightCol < n) {
+            Board c4 = getCopyBoard();
+            c4.tiles[row][col] = c4.tiles[row][rightCol];
+            c4.tiles[row][rightCol] = 0;
+            neighbors.add(c4);
+        }
+
+        return neighbors;
     }
 
     // a board that is obtained by exchanging any pair of tiles
     public Board twin() {
-        return null;
+        Board copy = getCopyBoard();
+        boolean foundA = false;
+        boolean foundB = false;
+        int rowA = 0;
+        int colA = 0;
+        int rowB = 0;
+        int colB = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (this.tiles[i][j] != 0 && foundA) {
+                    rowB = i;
+                    colB = j;
+                    foundB = true;
+                    break;
+                }
+
+                if (this.tiles[i][j] != 0) {
+                    rowA = i;
+                    colA = j;
+                    foundA = true;
+                    continue;
+                }
+            }
+            if (foundB) {
+                break;
+            }
+        }
+
+        int tmp = copy.tiles[rowA][colA];
+        copy.tiles[rowA][colA] = copy.tiles[rowB][colB];
+        copy.tiles[rowB][colB] = tmp;
+        return copy;
     }
 
     // unit testing (not graded)
@@ -124,7 +199,50 @@ public class Board {
             {7, 0, 8}
         });
 
-        System.out.println(board.toString());
+        System.out.println("=== Board ===");
+        System.out.println(board);
+
+        System.out.println("=== dimension() ===");
+        System.out.println(board.dimension());
+
+        System.out.println("=== hamming() ===");
+        System.out.println(board.hamming());
+
+        System.out.println("=== manhattan() ===");
+        System.out.println(board.manhattan());
+
+        System.out.println("=== isGoal() ===");
+        System.out.println(board.isGoal());
+
+        System.out.println("=== equals() ===");
+        Board sameBoard = new Board(new int[][]{
+            {1, 2, 3},
+            {4, 5, 6},
+            {7, 0, 8}
+        });
+
+        Board differentBoard = new Board(new int[][]{
+            {1, 2, 3},
+            {4, 5, 6},
+            {7, 8, 0}
+        });
+
+        System.out.println("board == sameBoard: " + (board == sameBoard));
+        System.out.println("board.equals(sameBoard): " + board.equals(sameBoard));
+        System.out.println("board.equals(differentBoard): " + board.equals(differentBoard));
+
+        System.out.println("=== neighbors() ===");
+        for (Board neighbor : board.neighbors()) {
+            System.out.println(neighbor);
+            System.out.println();
+        }
+
+        System.out.println("=== twin() ===");
+        Board twin = board.twin();
+        System.out.println(twin);
+
+        System.out.println("=== Original nach twin() ===");
+        System.out.println(board);
     }
 
 }
