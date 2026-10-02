@@ -35,6 +35,25 @@ console.log(isBst(t1, null, null))
 
 /**
  * 3) Inorder traversal with constant extra space
- * Design an algorithm to perfoarm an inorder traversal of a binary search tree using
+ * Design an algorithm to perform an inorder traversal of a binary search tree using
  * only a constant amount of extra space.
+ */
+
+function traversal(node: N) {
+    if (node === null) return;
+    if (node.left) traversal(node.left)
+    // Do something with this node
+    if (node.right) traversal(node.right)
+}
+
+/**
+ * 4) Web tracking
+ * Suppose that you are tracking n web sites and m users and you want to support the following API:
+ * - User visits a website
+ * - How many times has a given user visited a given site?
+ * What data structure or data structures would you use?
+ */
+/**
+ * Answer:
+ * I would use a symbol table and implement it as hash map for fast lookups. 
  */
