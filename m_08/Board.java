@@ -9,25 +9,36 @@ public class Board {
     // create a board from an n-by-n array of tiles,
     // where tiles[row][col] = tile at (row, col)
     public Board(int[][] tiles) {
-        this.tiles = tiles;
         this.n = tiles.length;
+        this.tiles = new int[n][n];
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                this.tiles[i][j] = tiles[i][j];
+            }
+        }
     }
                                            
     // string representation of this board
     public String toString() {
-        String resp = String.valueOf(this.n) + "\n";
+        StringBuilder resp = new StringBuilder();
+        resp.append(this.n).append("\n");
+
         for (int i = 0; i < tiles.length; i++) {
             for (int j = 0; j < tiles[i].length; j++) {
-                resp += String.valueOf(tiles[i][j]);
+                resp.append(tiles[i][j]);
+
                 if (j < tiles[j].length - 1) {
-                    resp += " ";
+                    resp.append(" ");
                 }
             }
+
             if (i < tiles[i].length - 1) {
-                resp += "\n";
+                resp.append("\n");
             }
         }
-        return resp;
+
+        return resp.toString();
     }
 
     // board dimension n
@@ -45,7 +56,7 @@ public class Board {
                     correct = 0;
                 }
 
-                if (this.tiles[i][j] != correct) {
+                if (this.tiles[i][j] != 0 && this.tiles[i][j] != correct) {
                     nwrong++;
                 }
             }
@@ -76,7 +87,7 @@ public class Board {
 
     // does this board equal y?
     public boolean equals(Object y) {
-        if (!(y instanceof Board)) {
+        if (y == null || y.getClass() != this.getClass()) {
             return false;
         }
         Board that = (Board) y;

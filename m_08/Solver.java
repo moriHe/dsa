@@ -1,40 +1,112 @@
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Solver {
-    boolean solvable;
+    private boolean solvable;
+    private SearchNode goalNode;
+
+    private class SearchNode implements Comparable<SearchNode> {
+        private Board board;
+        private int movesTotal;
+        private SearchNode prevNode;
+        private int manhatten;
+        @Override
+        public int compareTo(SearchNode that) {
+            return Integer.compare(this.getManhatten(), that.getManhatten());
+        }
+
+        SearchNode(Board board, int movesTotal, SearchNode prevNode) {
+            this.board = board;
+            this.movesTotal = movesTotal;
+            this.prevNode = prevNode;
+            this.manhatten = movesTotal + board.manhattan();
+        }
+
+        Board getBoard() {
+            return this.board;
+        }
+
+        int getMovesTotal() {
+            return this.movesTotal;
+        }
+
+        private int getManhatten() {
+            return this.manhatten;
+        }
+
+        Board getPrevBoard() {
+            if (this.prevNode == null) {
+                return null;
+            }
+            return this.prevNode.getBoard();
+        }
+    }
     // find a solution to the initial board (using the A* algorithm)
     public Solver(Board initial) {
         if (initial == null) {
             throw new IllegalArgumentException();
         }
         this.solvable = false;
-        Board twin = initial.twin();
-        MinPQ<Board> pqInitial = new MinPQ<Board>();
-        pqInitial.insert(initial);
-        boolean found = false;
-        Board min = null;
-        while (!found) {
-            if (pqInitial.isEmpty()) {
-                break;
-            }
-            min = pqInitial.delMin();
-            if (min.isGoal()) {
-                break;
-            }
-            min.neighbors().forEach((neighbor) -> {
-                pqInitial.insert(neighbor);
-            });
-  
-        }
-
+        this.goalNode = null;
         
+        Board twin = initial.twin();
+
+        MinPQ<SearchNode> pq = new MinPQ<>();
+        pq.insert(new SearchNode(initial, 0, null));
+
+        MinPQ<SearchNode> pqtwin = new MinPQ<>();
+        pqtwin.insert(new SearchNode(twin, 0, null));
+
+        boolean found = false;
+        while (!found) {
+            if (pq.isEmpty()) {
+                break;
+            }
+
+            SearchNode min = pq.delMin();
+            if (min.getBoard().isGoal()) {
+                this.goalNode = min;
+                found = true;
+                this.solvable = true;
+                break;
+            }
+
+            if (pqtwin.isEmpty()) {
+                break;
+            }
+
+            SearchNode mintwin = pqtwin.delMin();
+            if (mintwin.getBoard().isGoal()) {
+                found = true;
+                this.solvable = false;
+                break;
+            }
+
+            Board prevBoard = min.getPrevBoard();
+            min.getBoard().neighbors().forEach((neighbor) -> {
+                
+                if (prevBoard == null || !prevBoard.equals(neighbor))  {
+                    pq.insert(new SearchNode(neighbor, min.getMovesTotal() + 1, min));
+                }
+            });
+
+            Board prevTwinBoard = mintwin.getPrevBoard();
+            mintwin.getBoard().neighbors().forEach((neighbor) -> {
+                
+                if (prevTwinBoard == null || !prevTwinBoard.equals(neighbor))  {
+                    pqtwin.insert(new SearchNode(neighbor, mintwin.getMovesTotal() + 1, mintwin));
+                }
+            });
+        }   
     }   
 
     // is the initial board solvable? (see below)
     public boolean isSolvable() {
-        return true;
+        return this.solvable;
     }
 
     // min number of moves to solve initial board; -1 if unsolvable
@@ -42,7 +114,7 @@ public class Solver {
         if (!isSolvable()) {
             return -1;
         }
-        return 0;
+        return this.goalNode.getMovesTotal();
     }
 
     // sequence of boards in a shortest solution; null if unsolvable
@@ -50,12 +122,32 @@ public class Solver {
         if (!isSolvable()) {
             return null;
         }
-        return null;
+
+        SearchNode initial = this.goalNode;
+        List<Board> boards = new ArrayList<>();
+        while (initial.prevNode != null) {
+            boards.add(initial.getBoard());
+            initial = initial.prevNode;
+        }
+
+        boards.add(initial.getBoard());
+        
+        int left = 0;
+        int right = boards.size() - 1;
+        while (left < right) {
+            Board tmp = boards.get(left);
+            boards.set(left, boards.get(right));
+            boards.set(right, tmp);
+            left++;
+            right--;
+        }
+
+        return boards;
     }
 
     // test client (see below) 
     public static void main(String[] args) {
-
+        System.out.println("Hello World");
         // create initial board from file
         In in = new In(args[0]);
         int n = in.readInt();
