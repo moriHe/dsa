@@ -17,34 +17,38 @@
 
 function docSearch(seqw: string[], quew: string[]): number | null {
     let intervals: number[] = [];
-    let leftright = true;
     let sptr = 0;
     let qptr = 0;
     let currinterval = 0;
+    let start = 0;
+    let end = 0;
+    let leftright = true;
     while (sptr < seqw.length) {
-        if (sptr === -1) break;
-        if (seqw[sptr] === quew[qptr]) {
-            if (leftright) qptr++;
-            else qptr--;
-
-            if (leftright && qptr >= quew.length) {
-                leftright = false
-                if (currinterval >= quew.length) intervals.push(currinterval)
-                currinterval = 0;
-                qptr--;
-            }
-            else if (!leftright && qptr < 0) {
-                leftright = true;
-                if (currinterval >= quew.length) intervals.push(currinterval)
-                currinterval = 0;
-                qptr++;
-            }
+        if (qptr === quew.length) {
+            end = sptr - 1;
+            intervals.push(end - start + 1);
+            currinterval = 0;
+            qptr--;
+            sptr--;
+            leftright = false;
         }
-        currinterval++;
-        if (leftright) sptr++;
-        else sptr--;
-    }
 
+        if (qptr === -1) {
+            start = sptr + 1;
+            intervals.push(end - start + 1);
+            currinterval = 0;
+            qptr++;
+            sptr = sptr + 2;
+            leftright = true;
+        }
+        if (seqw[sptr] === quew[qptr]) {
+            leftright ? qptr++ : qptr--;
+        }
+
+        currinterval++;
+        leftright ? sptr++ : sptr--;
+    }
+    console.log(intervals)
     return intervals.length ? Math.min(...intervals) : null;
 }
 
