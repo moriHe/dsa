@@ -23,10 +23,9 @@ function docSearch(seqw: string[], quew: string[]): number | null {
     let start = 0;
     let end = 0;
     let leftright = true;
-    while (sptr < seqw.length) {
+    while (sptr <= seqw.length) {
         if (qptr === quew.length) {
             end = sptr - 1;
-            intervals.push(end - start + 1);
             currinterval = 0;
             qptr--;
             sptr--;
@@ -38,7 +37,7 @@ function docSearch(seqw: string[], quew: string[]): number | null {
             intervals.push(end - start + 1);
             currinterval = 0;
             qptr++;
-            sptr = sptr + 2;
+            sptr = start + 1;
             leftright = true;
         }
         if (seqw[sptr] === quew[qptr]) {
@@ -51,12 +50,13 @@ function docSearch(seqw: string[], quew: string[]): number | null {
     console.log(intervals)
     return intervals.length ? Math.min(...intervals) : null;
 }
-
+/*
 const dc = ["A", "D", "W", "W", "B", "A", "C", "B", "C"];
 const query = ["A", "B", "C"];
 
 docSearch(dc, query);
-// a b a c b c
+*/
+
 /**
  * 3) Generalized queue
  * Design a generalized queue data type that supports all of the following operations in logarithmic
@@ -67,3 +67,49 @@ docSearch(dc, query);
  * - Return the ith item in the queue
  * - Remove the ith item in the queue
  */
+
+type QNode = {
+    value: number;
+    left: QNode | null;
+    right: QNode | null;
+    parent: QNode | null;
+    color: 0 | 1;           // 0 black, 1 red
+    size: number;
+}
+
+class GeneralizedQueue {
+    root: QNode | null;
+    constructor() {
+        this.root = null;
+    }
+
+    append(value: number) {
+        let newNode: QNode = {
+            value,
+            left: null,
+            right: null,
+            parent: null,
+            color: 0,
+            size: 1
+        }
+        if (this.root === null) {
+            this.root = newNode;
+        }
+    }
+
+    remove() {
+        // remove front
+    }
+
+    getItemAtPos() {
+        // return ith item
+    }
+
+    removeAtPos() {
+        // remove ith item
+    }
+
+
+}
+
+const gq = new GeneralizedQueue();
