@@ -94,7 +94,23 @@ class GeneralizedQueue {
         }
         if (this.root === null) {
             this.root = newNode;
+            return;
         }
+
+        let curr: QNode | null = this.root;
+        while (true) {
+            curr.size = curr.size + 1;
+            if (curr.right === null) break;
+            curr = curr?.right;
+        }
+
+        curr.right = newNode;
+        newNode.color = 1;
+        newNode.parent = curr;
+
+        // Reparation ruels
+        // child and parent both red -> needs repair else all good
+
     }
 
     remove() {
