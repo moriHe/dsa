@@ -126,7 +126,6 @@ class GeneralizedQueue {
         // 4) parent right child, leaf left child -> right left rotation
         // https://www.youtube.com/watch?v=IuG3WSaDumc
 
-        // Important. The grandparent has to pay 
         if (child === parent.left) {
             if (grandparent.left === parent) {
                 // 1) right rotation
