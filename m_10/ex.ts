@@ -77,6 +77,9 @@ type QNode = {
     size: number;
 }
 
+const red = 1
+const black = 0
+
 class GeneralizedQueue {
     root: QNode | null;
     constructor() {
@@ -89,7 +92,7 @@ class GeneralizedQueue {
             left: null,
             right: null,
             parent: null,
-            color: 0,
+            color: black,
             size: 1
         }
         if (this.root === null) {
@@ -105,11 +108,52 @@ class GeneralizedQueue {
         }
 
         curr.right = newNode;
-        newNode.color = 1;
+        newNode.color = red;
         newNode.parent = curr;
 
-        // Reparation ruels
-        // child and parent both red -> needs repair else all good
+        if (newNode.parent.color === black)
+            return;
+
+        let child = newNode;
+        let parent = newNode.parent!;
+        let grandparent = newNode.parent.parent!
+        let uncle = grandparent.left === parent ? grandparent.right : grandparent.left;
+
+        // Cases new
+        // 1) parent left child, leaf left child -> right rotation
+        // 2) parent right child, leaf right child -> left rotation
+        // 3) parent left child, leaf right child -> left right rotation
+        // 4) parent right child, leaf left child -> right left rotation
+        // https://www.youtube.com/watch?v=IuG3WSaDumc
+
+        // Important. The grandparent has to pay 
+        if (child === parent.left) {
+            if (grandparent.left === parent) {
+                // 1) right rotation
+            } else {
+                // 4) right left rotation
+            }
+        } else {
+            if (grandparent.left === parent) {
+                // 3) left right rotation
+            } else {
+                // 2) left rotation
+            }
+        }
+        // Cases
+        // 1) parent and uncle are red: Make great parent red, make parent and uncle black
+        if (parent.color === red && uncle?.color === red) {
+            if (grandparent.parent != null) grandparent.color = red;
+            parent.color = black;
+            uncle.color = black;
+        }
+        // 2) child red right, parent red, uncle black: left rotation. child is now parent, parent is left child, left child is right child. Then 3
+        if (parent.right === child && parent.color === red && (uncle?.color === black || uncle === null)) {
+            child.left = parent;
+        }
+        // 3) child red left, parent red. parent gets black. grandparent gets red. parent new grandparent.
+        // grandparent right child parent. parent's child new left child. grandparent right child still grandparent right child. 
+        // parent right child new grandparent left child
 
     }
 
