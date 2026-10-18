@@ -80,10 +80,42 @@ type QNode = {
 const red = 1
 const black = 0
 
+enum BRANCH_CASE {
+    LL,
+    LR,
+    RR,
+    RL,
+    XX
+}
+
+function getBranchCase(root: QNode, child: QNode): BRANCH_CASE {
+    if (root.right && root.right.right === child) return BRANCH_CASE.RR
+    if (root.right && root.right.left === child) return BRANCH_CASE.RL
+    if (root.left && root.left.left === child) return BRANCH_CASE.LL
+    if (root.left && root.left.right === child) return BRANCH_CASE.LR
+    return BRANCH_CASE.XX;
+}
+
 class GeneralizedQueue {
     root: QNode | null;
     constructor() {
         this.root = null;
+    }
+
+    private rotateLeft(root: QNode) {
+
+    }
+
+    private rotateLeftRight(root: QNode) {
+
+    }
+
+    private rotateRight(root: QNode) {
+
+    }
+
+    private rotateRightLeft(root: QNode) {
+
     }
 
     append(value: number) {
@@ -119,41 +151,25 @@ class GeneralizedQueue {
         let grandparent = newNode.parent.parent!
         let uncle = grandparent.left === parent ? grandparent.right : grandparent.left;
 
-        // Cases new
-        // 1) parent left child, leaf left child -> right rotation
-        // 2) parent right child, leaf right child -> left rotation
-        // 3) parent left child, leaf right child -> left right rotation
-        // 4) parent right child, leaf left child -> right left rotation
         // https://www.youtube.com/watch?v=IuG3WSaDumc
+        // https://www.youtube.com/watch?v=ZgtAONMxpwY
+        // https://www.geeksforgeeks.org/dsa/introduction-to-red-black-tree/
 
-        if (child === parent.left) {
-            if (grandparent.left === parent) {
-                // 1) right rotation
+        if (child.color === red && parent.color === red) {
+            if (uncle?.color === red) {
+                uncle.color = black;
+                parent.color = black;
+                if (grandparent.parent !== null) grandparent.color = red
+                else grandparent.color = black;
             } else {
-                // 4) right left rotation
-            }
-        } else {
-            if (grandparent.left === parent) {
-                // 3) left right rotation
-            } else {
-                // 2) left rotation
-            }
-        }
-        // Cases
-        // 1) parent and uncle are red: Make great parent red, make parent and uncle black
-        if (parent.color === red && uncle?.color === red) {
-            if (grandparent.parent != null) grandparent.color = red;
-            parent.color = black;
-            uncle.color = black;
-        }
-        // 2) child red right, parent red, uncle black: left rotation. child is now parent, parent is left child, left child is right child. Then 3
-        if (parent.right === child && parent.color === red && (uncle?.color === black || uncle === null)) {
-            child.left = parent;
-        }
-        // 3) child red left, parent red. parent gets black. grandparent gets red. parent new grandparent.
-        // grandparent right child parent. parent's child new left child. grandparent right child still grandparent right child. 
-        // parent right child new grandparent left child
+                let bcase: BRANCH_CASE = getBranchCase(grandparent, child);
 
+                if (bcase === BRANCH_CASE.RR) this.rotateLeft(grandparent) // Linksrotation am Großerlternknoten
+                else if (bcase === BRANCH_CASE.RL) this.rotateRightLeft(grandparent) // Rechtsrotation am Elternknoten, dann Linksrotation am Großelternknoten
+                else if (bcase === BRANCH_CASE.LL) this.rotateRight(grandparent) // Rechtsrotation am Großerlternknoten
+                else if (bcase === BRANCH_CASE.LR) this.rotateLeftRight(grandparent) // Linksrotation am Elternknoten, dann Rechtsrotation am Großelternknoten
+            }
+        }
     }
 
     remove() {
