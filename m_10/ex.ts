@@ -102,20 +102,54 @@ class GeneralizedQueue {
         this.root = null;
     }
 
-    private rotateLeft(root: QNode) {
-
+    private updateSize(node: QNode) {
+        node.size = 1
+            + (node.left?.size ?? 0)
+            + (node.right?.size ?? 0);
     }
 
-    private rotateLeftRight(root: QNode) {
+    private rotateLeft(root: QNode) {
+        let p = root.parent;
+        let r = root.right!;
+
+        root.right = r.left;
+        if (r.left !== null) r.left.parent = root;
+
+        r.parent = p;
+        root.parent = r;
+        r.left = root;
+
+        if (p !== null) {
+            p.left === root ? p.left = r : p.right = r
+        } else {
+            this.root = r;
+        }
+
+        this.updateSize(root);
+        this.updateSize(r);
 
     }
 
     private rotateRight(root: QNode) {
+        let p = root.parent;
+        let l = root.left!;
 
-    }
+        root.left = l.right;
+        if (l.right !== null) l.right.parent = root;
 
-    private rotateRightLeft(root: QNode) {
+        l.parent = p;
+        root.parent = l;
+        l.right = root;
 
+        if (p !== null) {
+            p.left === root ? p.left = l : p.right = l;
+        } else {
+            this.root = l;
+        }
+
+        
+        this.updateSize(root);
+        this.updateSize(l);
     }
 
     append(value: number) {
@@ -164,10 +198,24 @@ class GeneralizedQueue {
             } else {
                 let bcase: BRANCH_CASE = getBranchCase(grandparent, child);
 
-                if (bcase === BRANCH_CASE.RR) this.rotateLeft(grandparent) // Linksrotation am Großerlternknoten
-                else if (bcase === BRANCH_CASE.RL) this.rotateRightLeft(grandparent) // Rechtsrotation am Elternknoten, dann Linksrotation am Großelternknoten
-                else if (bcase === BRANCH_CASE.LL) this.rotateRight(grandparent) // Rechtsrotation am Großerlternknoten
-                else if (bcase === BRANCH_CASE.LR) this.rotateLeftRight(grandparent) // Linksrotation am Elternknoten, dann Rechtsrotation am Großelternknoten
+                if (bcase === BRANCH_CASE.RR) {
+                    // Linksrotation am Großelternknoten
+                    this.rotateLeft(grandparent) 
+                }
+                else if (bcase === BRANCH_CASE.RL) {
+                    // Rechtsrotation am Elternknoten, dann Linksrotation am Großelternknoten
+                    this.rotateRight(parent)
+                    this.rotateLeft(grandparent)
+                } 
+                else if (bcase === BRANCH_CASE.LL) {
+                    // Rechtsrotation am Großelternknoten
+                    this.rotateRight(grandparent)
+                }
+                else if (bcase === BRANCH_CASE.LR) {
+                    // Linksrotation am Elternknoten, dann Rechtsrotation am Großelternknoten
+                    this.rotateLeft(parent)
+                    this.rotateRight(grandparent)
+                }
             }
         }
     }
