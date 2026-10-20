@@ -224,8 +224,26 @@ class GeneralizedQueue {
         // remove front
     }
 
-    getItemAtPos() {
+    getItemAtPos(i: number): QNode | null {
         // return ith item
+        if (this.root === null || i < 0 || i >= this.root.size) return null;
+        // remove front
+        let curr: QNode | null = this.root
+        while (curr !== null) {
+            let leftSize = curr.left?.size ?? 0;
+            if (i < leftSize) {
+                curr = curr.left;
+                continue;
+            }
+
+            if (i === leftSize) break;
+            if (i > leftSize) {
+                curr = curr.right;
+                i = i - leftSize - 1;
+            }
+        }
+
+        return curr;
     }
 
     removeAtPos() {
