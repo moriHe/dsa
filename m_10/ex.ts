@@ -181,47 +181,64 @@ class GeneralizedQueue {
             return;
 
         let child = newNode;
-        let parent = newNode.parent!;
-        let grandparent = newNode.parent.parent!
-        let uncle = grandparent.left === parent ? grandparent.right : grandparent.left;
+        while (true) {
+            let parent = child.parent!;
+            let grandparent = child.parent!.parent!
+            let uncle = grandparent.left === parent ? grandparent.right : grandparent.left;
+            if (child.color === red && parent.color === red) {
+                if (uncle?.color === red) {
+                    uncle.color = black;
+                    parent.color = black;
+                    grandparent.color = red;
 
-        // https://www.youtube.com/watch?v=IuG3WSaDumc
-        // https://www.youtube.com/watch?v=ZgtAONMxpwY
-        // https://www.geeksforgeeks.org/dsa/introduction-to-red-black-tree/
+                    child = grandparent;
+                    continue;
+                } else {
+                    let bcase: BRANCH_CASE = getBranchCase(grandparent, child);
 
-        if (child.color === red && parent.color === red) {
-            if (uncle?.color === red) {
-                uncle.color = black;
-                parent.color = black;
-                if (grandparent.parent !== null) grandparent.color = red
-                else grandparent.color = black;
+                    if (bcase === BRANCH_CASE.RR) {
+                        // Linksrotation am Großelternknoten
+                        this.rotateLeft(grandparent) 
+                    }
+                    else if (bcase === BRANCH_CASE.RL) {
+                        // Rechtsrotation am Elternknoten, dann Linksrotation am Großelternknoten
+                        this.rotateRight(parent)
+                        this.rotateLeft(grandparent)
+                    } 
+                    else if (bcase === BRANCH_CASE.LL) {
+                        // Rechtsrotation am Großelternknoten
+                        this.rotateRight(grandparent)
+                    }
+                    else if (bcase === BRANCH_CASE.LR) {
+                        // Linksrotation am Elternknoten, dann Rechtsrotation am Großelternknoten
+                        this.rotateLeft(parent)
+                        this.rotateRight(grandparent)
+                    }
+
+                    if (bcase === BRANCH_CASE.RR || bcase === BRANCH_CASE.LL) {
+                        parent.color = black
+                    } else {
+                        child.color = black;
+                    }
+
+                    grandparent.color = red;
+                    break;
+                }
             } else {
-                let bcase: BRANCH_CASE = getBranchCase(grandparent, child);
-
-                if (bcase === BRANCH_CASE.RR) {
-                    // Linksrotation am Großelternknoten
-                    this.rotateLeft(grandparent) 
-                }
-                else if (bcase === BRANCH_CASE.RL) {
-                    // Rechtsrotation am Elternknoten, dann Linksrotation am Großelternknoten
-                    this.rotateRight(parent)
-                    this.rotateLeft(grandparent)
-                } 
-                else if (bcase === BRANCH_CASE.LL) {
-                    // Rechtsrotation am Großelternknoten
-                    this.rotateRight(grandparent)
-                }
-                else if (bcase === BRANCH_CASE.LR) {
-                    // Linksrotation am Elternknoten, dann Rechtsrotation am Großelternknoten
-                    this.rotateLeft(parent)
-                    this.rotateRight(grandparent)
-                }
+                break;
             }
         }
+
+        if (this.root !== null) {
+            this.root.color = black;
+        }
+
     }
 
     remove() {
         // remove front
+        let firstEl: QNode | null = this.getItemAtPos(0);
+        if (firstEl === null) return null;
     }
 
     getItemAtPos(i: number): QNode | null {
