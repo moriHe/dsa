@@ -235,10 +235,52 @@ class GeneralizedQueue {
 
     }
 
-    remove() {
+    remove(): QNode | null {
         // remove front
         let firstEl: QNode | null = this.getItemAtPos(0);
         if (firstEl === null) return null;
+
+        if (this.root?.size === 1) {
+            this.root = null;
+            return firstEl;
+        }
+
+        let parent: QNode | null = firstEl.parent!
+        if (firstEl.color === red) {
+            parent.left === firstEl ? parent.left = null : parent.right = null;
+            while(parent) {
+                parent.size = parent.size - 1;
+                parent = parent.parent;
+            }
+            firstEl.parent = null;
+            return firstEl;
+        }
+
+        if (firstEl.color === black && firstEl.right !== null && firstEl.right.color === red) {
+            let child = firstEl.right;
+            parent.left = child;
+            child.parent = parent;
+            child.color = black;
+            while (parent) {
+                parent.size = parent.size - 1;
+                parent = parent.parent;
+            }
+            firstEl.right = null;
+            firstEl.parent = null;
+            return firstEl;
+        }
+
+        // Black node gets removed
+        let sibling = parent.right;
+        let nearSibChild = sibling?.left;
+        let farSibChild = sibling?.right;
+        // Case 1 sibiling is red
+
+        // Case 2 sibling is black, both children are black
+
+        // Case 3 sibling is black, near child is red, far child is black
+
+        // Case 4 sibling is black, near child is black, far child is red
     }
 
     getItemAtPos(i: number): QNode | null {
