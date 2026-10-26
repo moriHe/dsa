@@ -235,7 +235,7 @@ class GeneralizedQueue {
 
     }
 
-    remove(): QNode | null {
+    remove() {
         // remove front
         let firstEl: QNode | null = this.getItemAtPos(0);
         if (firstEl === null) return null;
@@ -272,15 +272,63 @@ class GeneralizedQueue {
 
         // Black node gets removed
         let sibling = parent.right;
-        let nearSibChild = sibling?.left;
-        let farSibChild = sibling?.right;
-        // Case 1 sibiling is red
 
-        // Case 2 sibling is black, both children are black
+        while (true) {
+            let nearSibChild = sibling?.left;
+            let farSibChild = sibling?.right;
+            let hasCase3 = false;
+            if (sibling && sibling.color === red) {
+                // Case 1 sibiling is red
+                sibling.color = black;
+                parent!.color = red;
+                this.rotateLeft(parent!);
+                sibling = parent!.right;
+                continue;
+            } else if (sibling === null || (sibling && sibling.color === black && (nearSibChild?.color === black || nearSibChild === null) && (farSibChild?.color === black || farSibChild === null))) {
+                 // Case 2 sibling is black, both children are black
+                 sibling && (sibling.color = red);
+                 if (parent!.color === red) {
+                    parent!.color = black;
+                    break;
+                 }
 
-        // Case 3 sibling is black, near child is red, far child is black
+                 if (parent === this.root) {
+                    break;
+                 }
 
-        // Case 4 sibling is black, near child is black, far child is red
+                 let oldParent: QNode | null = parent;
+                 parent = oldParent!.parent!;
+                 sibling = parent.right;
+                 continue;
+
+            } else if (sibling && sibling.color === black && nearSibChild && nearSibChild.color === red && (farSibChild === null || farSibChild?.color === black)) {
+                // Case 3 sibling is black, near child is red, far child is black
+                nearSibChild.color = black;
+                sibling.color = red;
+                this.rotateRight(sibling);
+                sibling = parent.right;
+                continue;
+
+            } else if (sibling?.color === black && farSibChild?.color === red) {
+                // Case 4 sibling is black, near child is black, far child is red
+                sibling && (sibling.color = parent.color)
+                parent.color = black;
+                farSibChild && (farSibChild.color = black);
+                this.rotateLeft(parent!)
+                break;
+            }
+        }
+
+        let curr: QNode | null = firstEl.parent;
+        while (curr !== null) {
+            curr.size--;
+            curr = curr.parent;
+        }
+
+        firstEl.parent = null;
+        firstEl.left = null;
+        firstEl.right = null;
+        return firstEl;
     }
 
     getItemAtPos(i: number): QNode | null {
